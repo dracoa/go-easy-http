@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+type H map[string]interface{}
+
 func PanicIf(err error) {
 	if err != nil {
 		panic(err)
@@ -35,12 +37,23 @@ func UserAgent(req *http.Request) string {
 }
 
 func ParseJSON(req *http.Request, placeholder interface{}) {
-	bytes, err:=ioutil.ReadAll(req.Body)
-	if err != nil {
-		panic(err)
-	}
+	bytes, err := ioutil.ReadAll(req.Body)
+	PanicIf(err)
 	err = json.Unmarshal(bytes, &placeholder)
-	if err != nil {
-		panic(err)
-	}
+	PanicIf(err)
+}
+
+func WriteJSON(w http.ResponseWriter, status int, j map[string]interface{}) {
+	bytes, err := json.Marshal(j)
+	PanicIf(err)
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_, err = w.Write(bytes)
+	PanicIf(err)
+}
+
+func WriteText(w http.ResponseWriter, status int, t string) {
+	w.WriteHeader(status)
+	_, err := w.Write([]byte(t))
+	PanicIf(err)
 }
