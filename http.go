@@ -29,7 +29,7 @@ func PathParams(req *http.Request) []string {
 }
 
 func BearerToken(req *http.Request) string {
-	return strings.Replace(req.Header.Get("Authorization"), "Bearer ", "", 0)
+	return strings.ReplaceAll(req.Header.Get("Authorization"), "Bearer ", "")
 }
 
 func UserAgent(req *http.Request) string {
