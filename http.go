@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"runtime/debug"
 	"strings"
 )
 
@@ -17,6 +18,19 @@ func PanicIf(err error) {
 }
 
 func Recover(w http.ResponseWriter) {
+	if r := recover(); r != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("%v", r)))
+		return
+	}
+}
+
+func HandleError(w http.ResponseWriter, printTrace bool) {
+	if printTrace {
+		fmt.Println("===================================")
+		debug.PrintStack()
+		fmt.Println("===================================")
+	}
 	if r := recover(); r != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("%v", r)))
