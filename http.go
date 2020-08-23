@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"runtime/debug"
 	"strings"
@@ -32,6 +33,7 @@ func HandleError(w http.ResponseWriter, printTrace bool) {
 			debug.PrintStack()
 			fmt.Println("===================================")
 		}
+		log.Printf("%v", r)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("%v", r)))
 		return
